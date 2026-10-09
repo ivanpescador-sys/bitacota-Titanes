@@ -282,6 +282,8 @@
     body.printingPDF *{visibility:hidden !important;}
     body.printingPDF #reportePDF, body.printingPDF #reportePDF *{visibility:visible !important;}
     body.printingPDF #reportePDF{position:absolute;left:0;top:0;width:100%;margin:0;border:none;box-shadow:none;}
+    html.printingPDF, body.printingPDF, body.printingPDF *{height:auto !important; max-height:none !important; overflow:visible !important;}
+    body.printingPDF #reportePDF{height:auto !important;}
   }
   @media print{
     header, #roster, #rosterToolbar, footer.disclaimer, .backBtn, .cardActions, .medidaForm, .photoTimeline, #newBtn, .printHide{display:none !important;}
@@ -1124,8 +1126,8 @@
         var prevTitle = document.title;
         var primer = (state.socias[state.selectedId] && state.socias[state.selectedId].nombre || 'Socia').trim().split(/\s+/)[0];
         document.title = 'Reporte ' + primer + ' ' + todayStr();
-        document.body.classList.add('printingPDF');
-        var done = function(){ document.body.classList.remove('printingPDF'); document.title = prevTitle; window.removeEventListener('afterprint', done); };
+        document.body.classList.add('printingPDF'); document.documentElement.classList.add('printingPDF');
+        var done = function(){ document.body.classList.remove('printingPDF'); document.documentElement.classList.remove('printingPDF'); document.title = prevTitle; window.removeEventListener('afterprint', done); };
         window.addEventListener('afterprint', done);
         window.print();
       });
