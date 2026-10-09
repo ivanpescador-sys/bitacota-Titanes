@@ -279,11 +279,9 @@
   }
 
   @media print{
-    body.printingPDF *{visibility:hidden !important;}
-    body.printingPDF #reportePDF, body.printingPDF #reportePDF *{visibility:visible !important;}
-    body.printingPDF #reportePDF{position:absolute;left:0;top:0;width:100%;margin:0;border:none;box-shadow:none;}
-    html.printingPDF, body.printingPDF, body.printingPDF *{height:auto !important; max-height:none !important; overflow:visible !important;}
-    body.printingPDF #reportePDF{height:auto !important;}
+    body.printingPDF > *:not(.printRoot){display:none !important;}
+    html.printingPDF, body.printingPDF{height:auto !important; overflow:visible !important; background:#fff;}
+    body.printingPDF .printRoot{display:block !important; position:static !important; width:100% !important; height:auto !important; max-height:none !important; overflow:visible !important; margin:0 !important; border:none !important; box-shadow:none !important; background:#fff;}
   }
   @media print{
     header, #roster, #rosterToolbar, footer.disclaimer, .backBtn, .cardActions, .medidaForm, .photoTimeline, #newBtn, .printHide{display:none !important;}
@@ -1126,8 +1124,11 @@
         var prevTitle = document.title;
         var primer = (state.socias[state.selectedId] && state.socias[state.selectedId].nombre || 'Socia').trim().split(/\s+/)[0];
         document.title = 'Reporte ' + primer + ' ' + todayStr();
+        var src = document.getElementById('reportePDF');
+        var clone = src ? src.cloneNode(true) : null;
+        if(clone){ clone.removeAttribute('id'); clone.classList.add('printRoot'); clone.style.border='none'; document.body.appendChild(clone); }
         document.body.classList.add('printingPDF'); document.documentElement.classList.add('printingPDF');
-        var done = function(){ document.body.classList.remove('printingPDF'); document.documentElement.classList.remove('printingPDF'); document.title = prevTitle; window.removeEventListener('afterprint', done); };
+        var done = function(){ document.body.classList.remove('printingPDF'); document.documentElement.classList.remove('printingPDF'); if(clone && clone.parentNode){ clone.parentNode.removeChild(clone); } document.title = prevTitle; window.removeEventListener('afterprint', done); };
         window.addEventListener('afterprint', done);
         window.print();
       });
